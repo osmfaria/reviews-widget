@@ -9,3 +9,19 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Product {
+  id String @id @default(uuid())
+  title String
+  price Float
+}
+
+model Review {
+  id String @id @default(uuid())
+  date DateTime @default(now())
+  description String
+  title String
+  rating Int
+  upvote Int?
+  downvote Int?
+}
