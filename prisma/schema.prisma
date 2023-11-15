@@ -22,6 +22,6 @@ model Review {
   description String
   title String
   rating Int
-  upvote Int?
-  downvote Int?
+  upvote Int @default(0)
+  downvote Int @default(0)
 }
