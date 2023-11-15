@@ -14,6 +14,8 @@ model Product {
   id String @id @default(uuid())
   title String
   price Float
+
+  reviews Review[]
 }
 
 model Review {
@@ -24,4 +26,7 @@ model Review {
   rating Int
   upvote Int @default(0)
   downvote Int @default(0)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
 }
