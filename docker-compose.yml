@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  api:
+    container_name: api-reviews
+    build: .
+    ports:
+      - 5000:5000
+    env_file: .env
+    depends_on:
+      - db
+      - migration
+    volumes:
+      - .:/app/
+      - /app/node_modules
+
+  db:
+    container_name: postgres-reviews
+    image: postgres:14.4-alpine
+    restart: always
+    ports:
+      - 5432:5432
+    env_file: .env
+    volumes:
+      - postgres-reviews-data:/var/lib/postgresql/data
+
+  migration:
+    build: .
+    volumes:
+      - .:/app
+    command: >
+      bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; 
+      npx prisma migrate deploy && echo "Migrations applied ✅" && exit 0'
+    depends_on:
+      - db
+
+volumes:
+  postgres-reviews-data:
