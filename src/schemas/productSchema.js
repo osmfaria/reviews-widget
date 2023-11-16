@@ -1,7 +1,7 @@
 import * as yup from 'yup'
 
 export const createProductSchema = yup.object().shape({
-  title: yup.string.required(),
+  title: yup.string().required(),
   price: yup
     .number()
     .positive()
