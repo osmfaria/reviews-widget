@@ -2,12 +2,6 @@ import { AppError } from '../../errors/appError.js'
 
 export const validate = (schema) => async (req, res, next) => {
   try {
-    if (req.file) {
-      const { mimetype, size } = req.file
-      const fileDataForValidation = { mimetype, size }
-      req.body = { ...req.body, file: fileDataForValidation }
-    }
-
     const validatedData = await schema.validate(req.body, {
       abortEarly: false,
       stripUnknown: true,
