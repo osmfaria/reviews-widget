@@ -1,17 +1,30 @@
 import { Router } from 'express'
 import { validate } from '../middleware/validationMiddleware.js'
 import { createProductSchema } from '../schemas/productSchema.js'
-import { createProductController } from '../controller/productController.js'
+import {
+  createProductController,
+  listProductsController,
+} from '../controller/productController.js'
 import multer from 'multer'
+import { fileMiddleware } from '../middleware/fileMiddleware.js'
 
-const upload = multer({ storage: multer.memoryStorage() })
+const upload = multer({
+  storage: multer.memoryStorage(),
+  fileFilter: fileMiddleware,
+  limits: { fieldSize: 5000000 },
+})
 const productRouter = Router()
 
 productRouter.post(
   '',
-  upload.single('file'),
+  upload.fields([
+    { name: 'coverImage', maxCount: 1 },
+    { name: 'gallery', maxCount: 5 },
+  ]),
   validate(createProductSchema),
   createProductController
 )
+
+productRouter.get('', listProductsController)
 
 export default productRouter
