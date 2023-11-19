@@ -14,10 +14,10 @@ model Product {
   id String @id @default(uuid())
   title String
   price Float
-  coverImage String
 
+  coverImage CoverImage?
   reviews Review[]
-  gallery Galery[]
+  gallery Gallery[]
 }
 
 model Review {
@@ -33,10 +33,18 @@ model Review {
   productId String
 }
 
-model Galery {
-  id String @id @default(uuid())
+model CoverImage {
+  id String @id
   image String
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String
+  productId String @unique
+}
+
+model Gallery {
+  id String @id
+  image String
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String 
 }
