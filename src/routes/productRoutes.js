@@ -3,6 +3,7 @@ import { validate } from '../middleware/validationMiddleware.js'
 import { createProductSchema } from '../schemas/productSchema.js'
 import {
   createProductController,
+  deleteProductController,
   listProductsController,
 } from '../controller/productController.js'
 import multer from 'multer'
@@ -26,5 +27,7 @@ productRouter.post(
 )
 
 productRouter.get('', listProductsController)
+
+productRouter.delete('/:product_id', deleteProductController)
 
 export default productRouter
