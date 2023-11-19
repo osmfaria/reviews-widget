@@ -1,5 +1,6 @@
-import createProductService from '../services/createProduct.services.js'
-import listProductsService from '../services/listProducts.services.js'
+import createProductService from '../services/product/createProduct.services.js'
+import deleteProductService from '../services/product/deleteProduct.service.js'
+import listProductsService from '../services/product/listProducts.services.js'
 
 export const createProductController = async (req, res) => {
   const data = req.body
@@ -17,4 +18,12 @@ export const listProductsController = async (req, res) => {
   const products = await listProductsService(name)
 
   res.status(200).json(products)
+}
+
+export const deleteProductController = async (req, res) => {
+  const { product_id } = req.params
+
+  await deleteProductService(product_id)
+
+  res.status(204).send()
 }
