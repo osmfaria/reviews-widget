@@ -14,8 +14,9 @@ export const createProductController = async (req, res) => {
 
 export const listProductsController = async (req, res) => {
   const name = req.query.name
+  const { page, limit } = req.pagination
 
-  const products = await listProductsService(name)
+  const products = await listProductsService(name, page, limit)
 
   res.status(200).json(products)
 }
