@@ -8,6 +8,7 @@ import {
 } from '../controller/productController.js'
 import multer from 'multer'
 import { fileMiddleware } from '../middleware/fileMiddleware.js'
+import paginateMiddleware from '../middleware/paginateMiddleware.js'
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -26,7 +27,7 @@ productRouter.post(
   createProductController
 )
 
-productRouter.get('', listProductsController)
+productRouter.get('', paginateMiddleware, listProductsController)
 
 productRouter.delete('/:product_id', deleteProductController)
 
