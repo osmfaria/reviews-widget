@@ -1,0 +1,690 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Reviews widget API",
+    "description": "Reviews widget API, offering endpoints for creating, listing, updating, and deleting reviews as well as products.",
+    "version": "1.0.0"
+  },
+  "basePath": "/",
+  "paths": {
+    "/products": {
+      "post": {
+        "description": "Create product",
+        "tags": ["Product"],
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "title",
+            "type": "string",
+            "description": "Product title",
+            "example": "JBL Earbuds",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "price",
+            "type": "number",
+            "example": 59,
+            "description": "Product price",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "coverImage",
+            "type": "file",
+            "description": "Cover image file",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "gallery",
+            "type": "array",
+            "items": {
+              "type": "file"
+            },
+            "description": "Gallery of product images",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/components/schemas/ResponseProducts"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "example": {
+                "message": { "title": "should be at least 3 characters long" }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "List Products",
+        "produces": ["application/json"],
+        "tags": ["Product"],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Name of the product to search for",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "default": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "default": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/products/{product_id}": {
+      "delete": {
+        "description": "Delete product",
+        "tags": ["Product"],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "description": "Id of the product to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        }
+      }
+    },
+    "/reviews/{product_id}": {
+      "post": {
+        "description": "Create review",
+        "tags": ["Review"],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "description": "Product id to add review for",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Review object",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Review"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/components/schemas/ResponseReview"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "example": {
+                "message": { "title": "should be at least 3 characters long" }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "List reviews",
+        "tags": ["Review"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "description": "Reviews associated with the product",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/reviews/{review_id}": {
+      "patch": {
+        "description": "Update review",
+        "tags": ["Review"],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "review_id",
+            "description": "Review id to update",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Review object",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UpdateReview"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "schema": {
+              "$ref": "#/components/schemas/ResponseUpdateReview"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "example": {
+                "message": { "title": "should be at least 3 characters long" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete review",
+        "tags": ["Review"],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "review_id",
+            "description": "Id of the review to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/reviews/downvote/{review_id}": {
+      "patch": {
+        "description": "Down vote review",
+        "tags": ["Review"],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "review_id",
+            "description": "Id of the review to down vote",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "schema": {
+              "$ref": "#/components/schemas/ResponseReview"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/reviews/upvote/{review_id}": {
+      "patch": {
+        "description": "Up vote review",
+        "tags": ["Review"],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "review_id",
+            "description": "Id of the review to up vote",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "schema": {
+              "$ref": "#/components/schemas/ResponseReview"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/reviews/ratings/{product_id}": {
+      "get": {
+        "description": "List Products",
+        "produces": ["application/json"],
+        "tags": ["Review"],
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "description": "Product id to get stats from",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "$ref": "#/components/schemas/ResponeReviewStats"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "type": "object",
+              "example": {
+                "message": "Product not found"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gallery/{product_id}": {
+      "post": {
+        "description": "Create gallery",
+        "tags": ["Gallery"],
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "type": "string",
+            "required": true,
+            "description": "Product id to add images for"
+          },
+          {
+            "in": "formData",
+            "name": "files",
+            "type": "array",
+            "items": {
+              "type": "file"
+            },
+            "description": "Product images files",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "number",
+                  "example": 2
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "example": {
+                "message": "Invalid file type, only jpeg and png are accepted"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gallery/{gallery_id}": {
+      "delete": {
+        "description": "Delete image from gallery",
+        "tags": ["Gallery"],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "gallery_id",
+            "description": "Id of the image to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "404": {
+            "description": "gallery image not found"
+          }
+        }
+      }
+    },
+    "/cover-image/{product_id}": {
+      "post": {
+        "description": "Create cover image",
+        "tags": ["Cover Image"],
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "type": "string",
+            "required": true,
+            "description": "Product id to add image for"
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "type": "file",
+            "description": "Product cover image file",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "type": "object",
+              "$ref": "#/components/schemas/ResponseCoverImage"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "example": {
+                "message": "Invalid file type, only jpeg and png are accepted"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cover-image/{image_id}": {
+      "delete": {
+        "description": "Delete cover image",
+        "tags": ["Cover Image"],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "image_id",
+            "description": "Id of the image to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "404": {
+            "description": "Cover image not found"
+          }
+        }
+      }
+    }
+  },
+
+  "components": {
+    "schemas": {
+      "ResponseProducts": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "0f04f189-a01d-4dba-9e64-cc87c2c039bd"
+          },
+          "title": {
+            "type": "string",
+            "example": "JBL Earbuds"
+          },
+          "price": {
+            "type": "number",
+            "example": 59
+          },
+          "gallery": {
+            "type": "array",
+            "example": [
+              {
+                "id": "01f6e6f6-6518-4b6a-a1dc-e259468d58df-article-1.png",
+                "image": "https://reviews-widget-storage.s3.us-west-2.amazonaws.com/01f6e6f6-6518-4b6a-a1dc-e259468d58df-article-1.png",
+                "productId": "0f663871-c2a2-460b-a96a-18fe595ce1e3"
+              },
+              {
+                "id": "c2c5055e-c78b-4c98-a682-9de9a7d5d174-article-2.png",
+                "image": "https://reviews-widget-storage.s3.us-west-2.amazonaws.com/c2c5055e-c78b-4c98-a682-9de9a7d5d174-article-2.png",
+                "productId": "0f663871-c2a2-460b-a96a-18fe595ce1e3"
+              }
+            ]
+          },
+          "coverImage": {
+            "type": "object",
+            "example": {
+              "id": "f85b9dd4-3e87-4ffe-9c55-acad9d6affb7-app-design.png",
+              "image": "https://reviews-widget-storage.s3.us-west-2.amazonaws.com/f85b9dd4-3e87-4ffe-9c55-acad9d6affb7-app-design.png",
+              "productId": "0f663871-c2a2-460b-a96a-18fe595ce1e3"
+            }
+          }
+        }
+      },
+      "Review": {
+        "type": "object",
+        "required": ["description", "title", "rating"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Outstanding earbuds!"
+          },
+          "description": {
+            "type": "string",
+            "example": "Great sound, comfortable fit, long battery life, perfect for workouts."
+          },
+          "rating": {
+            "type": "integer",
+            "example": 5
+          }
+        }
+      },
+      "UpdateReview": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Outstanding earbuds!!!"
+          }
+        }
+      },
+      "ResponseReview": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "0f04f189-a01d-4dba-9e64-cc87c2c039bd"
+          },
+          "date": {
+            "type": "string",
+            "example": "2023-11-19T15:49:38.742Z"
+          },
+          "description": {
+            "type": "string",
+            "example": "Great sound, comfortable fit, long battery life, perfect for workouts."
+          },
+          "title": {
+            "type": "string",
+            "example": "Outstanding earbuds!"
+          },
+          "rating": {
+            "type": "integer",
+            "example": 5
+          },
+          "upvote": {
+            "type": "integer",
+            "example": 0
+          },
+          "downvote": {
+            "type": "integer",
+            "example": 0
+          },
+          "productId": {
+            "type": "string",
+            "example": "0f04f189-a01d-4dba-9e64-cc87c2c039cv"
+          }
+        }
+      },
+      "ResponseUpdateReview": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "0f04f189-a01d-4dba-9e64-cc87c2c039bd"
+          },
+          "date": {
+            "type": "string",
+            "example": "2023-11-19T15:49:38.742Z"
+          },
+          "description": {
+            "type": "string",
+            "example": "Great sound, comfortable fit, long battery life, perfect for workouts."
+          },
+          "title": {
+            "type": "string",
+            "example": "Outstanding earbuds!!!"
+          },
+          "rating": {
+            "type": "integer",
+            "example": 5
+          },
+          "upvote": {
+            "type": "integer",
+            "example": 0
+          },
+          "downvote": {
+            "type": "integer",
+            "example": 0
+          },
+          "productId": {
+            "type": "string",
+            "example": "0f04f189-a01d-4dba-9e64-cc87c2c039cv"
+          }
+        }
+      },
+      "ResponeReviewStats": {
+        "type": "object",
+        "properties": {
+          "1": {
+            "type": "integer",
+            "example": 2
+          },
+          "2": {
+            "type": "integer",
+            "example": 5
+          },
+          "3": {
+            "type": "integer",
+            "example": 10
+          },
+          "4": {
+            "type": "integer",
+            "example": 24
+          },
+          "5": {
+            "type": "integer",
+            "example": 55
+          },
+          "avarageScore": {
+            "type": "integer",
+            "example": 4.25
+          }
+        }
+      },
+      "ResponseCoverImage": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "1901812d-4380-48ac-bcde-59343af1fef0-annie-spratt-gM8igOIP5MA-unsplash.jpg"
+          },
+          "image": {
+            "type": "string",
+            "example": "https://reviews-widget-storage.s3.us-west-2.amazonaws.com/1901812d-4380-48ac-bcde-59343af1fef0-annie-spratt-gM8igOIP5MA-unsplash.jpg"
+          },
+          "productId": {
+            "type": "string",
+            "example": "df188b82-2e18-4969-be64-4f33b3f2affe"
+          }
+        }
+      }
+    }
+  }
+}
