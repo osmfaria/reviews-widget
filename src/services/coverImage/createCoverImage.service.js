@@ -2,6 +2,7 @@ import { AppError } from '../../../errors/appError.js'
 import { prisma } from '../../database/prisma.js'
 import { s3 } from '../../database/aws.js'
 import { v4 as uuid } from 'uuid'
+import deleteCoverImageService from './deleteCoverImage.service.js'
 
 const createCoverImageService = async (product_id, file) => {
   const bucketName = process.env.BUCKET_NAME
@@ -9,10 +10,17 @@ const createCoverImageService = async (product_id, file) => {
   const fileName = `${uuid()}-${file.originalname}`
   const imageUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${fileName}`
 
-  const product = await prisma.product.findUnique({ where: { id: product_id } })
+  const product = await prisma.product.findUnique({
+    where: { id: product_id },
+    include: { coverImage: true },
+  })
 
   if (!product) {
     throw new AppError('product not found', 404)
+  }
+
+  if (product.coverImage) {
+    await deleteCoverImageService(product.coverImage.id)
   }
 
   const params = {
